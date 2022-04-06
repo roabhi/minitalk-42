@@ -6,58 +6,55 @@
 /*   By: rabril-h <rabril-h@student.42barc...>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/06 15:19:19 by rabril-h          #+#    #+#             */
-/*   Updated: 2022/04/06 17:50:14 by rabril-h         ###   ########.bcn      */
+/*   Updated: 2022/04/06 19:23:45 by rabril-h         ###   ########.bcn      */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
 
-void	decoder(unsigned char ch, pid_t pid)
+void	decoder(int sig, siginfo_t *info, void *context)
 {
-	int				c;
-	unsigned int	base;
+	static int	counter = 0;
+	static char	ch = 0;
 
-	c = 7;
-	base = 128;
-	while (c >= 0)
+	(void)context;
+	if (sig == SIGUSR2)
 	{
-		if (ch < base)
+		ch = ch | 128 >> counter;
+		kill(info->si_pid, SIGUSR2);
+	}	
+	counter++;
+	if (counter == 8)
+	{
+		if (ch == '\0')
 		{
-			ft_putchar_cnt('0');
-			kill(pid, SIGUSR1);
+			ft_putchar_cnt('\n');
+			kill(info->si_pid, SIGUSR1);
 		}			
 		else
-		{
-			ft_putchar_cnt('1');
-			kill(pid, SIGUSR2);	
-			ch = ch - base;			
-		}
-		base = base / 2;
-		c--;
-		usleep(200);
+			kill(info->si_pid, SIGUSR2);
+		write(1, &ch, 1);
+		ch = 0;
+		counter = 0;
 	}
 }
 
-int	main(int args, char **argv)
+int	main(void)
 {
-	int		_args;
-	char	*params;
-	int		counter;
-	int		server_pid;
+	struct sigaction	sa1;
+	struct sigaction	sa2;
+	pid_t				my_pid;
 
-	_args = args;
-	params = *argv;
-	counter = 0;
-	if (args == 3)
-	{
-		server_pid = ft_atoi(argv[1]);
-		while (argv[2][counter])
-		{
-			decoder(argv[2][counter], server_pid);
-			ft_putchar_cnt('\n');
-			counter++;
-		}
-		decoder('\n', server_pid);
-	}	
+	my_pid = getpid();
+	ft_printf("Server PID is %d", (int)my_pid);
+	ft_putchar_cnt('\n');
+	sa1.sa_flags = SA_SIGINFO;
+	sa1.sa_sigaction = decoder;
+	sigaction(SIGUSR1, &sa1, NULL);
+	sa2.sa_flags = SA_SIGINFO;
+	sa2.sa_sigaction = decoder;
+	sigaction(SIGUSR2, &sa2, NULL);
+	while (1)
+		sleep(5);
 	return (0);
 }

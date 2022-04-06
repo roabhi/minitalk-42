@@ -6,20 +6,19 @@
 /*   By: rabril-h <rabril-h@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 18:09:05 by rabril-h          #+#    #+#             */
-/*   Updated: 2022/04/06 14:58:34 by rabril-h         ###   ########.bcn      */
+/*   Updated: 2022/04/06 19:31:26 by rabril-h         ###   ########.bcn      */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
 
-void	decoder(int sig, siginfo_t *info,  void *context)
+void	decoder(int sig, siginfo_t *info, void *context)
 {
-	(void)info;
-	(void)context;
-
 	static int	counter = 0;
 	static char	ch = 0;
 
+	(void)info;
+	(void)context;
 	if (sig == SIGUSR2)
 		ch = ch | 128 >> counter;
 	counter++;
@@ -27,24 +26,14 @@ void	decoder(int sig, siginfo_t *info,  void *context)
 	{
 		write(1, &ch, 1);
 		ch = 0;
-		counter = 0;		
+		counter = 0;
 	}
-
-	//if (sig == SIGUSR1)
-	//	ft_putchar_cnt('0');
-	//else
-	//	ft_putchar_cnt('1');
-	//kill(info->si_pid, SIGUSR2);
-	//if (!context)
-	//return;
 }
 
 int	main(void)
 {
-	//ft_printf("El pid del server es %d", getpid());
-	
-	struct sigaction 	sa1;
-	struct sigaction 	sa2;
+	struct sigaction	sa1;
+	struct sigaction	sa2;
 	pid_t				my_pid;
 
 	my_pid = getpid();
@@ -56,8 +45,6 @@ int	main(void)
 	sa2.sa_flags = SA_SIGINFO;
 	sa2.sa_sigaction = decoder;
 	sigaction(SIGUSR2, &sa2, NULL);
-	//signal(SIGUSR1, decoder);
-	//signal(SIGUSR2, decoder);
 	while (1)
 		sleep(5);
 	return (0);

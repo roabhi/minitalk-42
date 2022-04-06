@@ -6,7 +6,7 @@
 /*   By: rabril-h <rabril-h@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 17:02:43 by rabril-h          #+#    #+#             */
-/*   Updated: 2022/04/06 14:59:22 by rabril-h         ###   ########.bcn      */
+/*   Updated: 2022/04/06 19:32:13 by rabril-h         ###   ########.bcn      */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,8 @@ void	decoder(unsigned char ch, pid_t pid)
 		else
 		{
 			ft_putchar_cnt('1');
-			kill(pid, SIGUSR2);	
-			ch = ch - base;			
+			kill(pid, SIGUSR2);
+			ch = ch - base;
 		}
 		base = base / 2;
 		c--;
@@ -40,13 +40,9 @@ void	decoder(unsigned char ch, pid_t pid)
 
 int	main(int args, char **argv)
 {
-	int		_args;
-	char	*params;
 	int		counter;
 	int		server_pid;
 
-	_args = args;
-	params = *argv;
 	counter = 0;
 	if (args == 3)
 	{
