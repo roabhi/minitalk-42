@@ -6,13 +6,10 @@
 /*   By: rabril-h <rabril-h@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 18:09:05 by rabril-h          #+#    #+#             */
-/*   Updated: 2022/04/04 21:39:47 by rabril-h         ###   ########.bcn      */
+/*   Updated: 2022/04/06 14:58:34 by rabril-h         ###   ########.bcn      */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <sys/signal.h>
-#include <unistd.h>
-#include <signal.h>
 #include "minitalk.h"
 
 void	decoder(int sig, siginfo_t *info,  void *context)
@@ -26,18 +23,11 @@ void	decoder(int sig, siginfo_t *info,  void *context)
 	if (sig == SIGUSR2)
 		ch = ch | 128 >> counter;
 	counter++;
-	//ft_printf("%d", counter);
 	if (counter == 8)
 	{
-		if (ch == '\0')
-			ft_putchar_cnt('\n');
-		else
-		{
-			write(1, &ch, 1);
-			ch = 0;
-			counter = 0;
-		}
-	
+		write(1, &ch, 1);
+		ch = 0;
+		counter = 0;		
 	}
 
 	//if (sig == SIGUSR1)
