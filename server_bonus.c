@@ -6,7 +6,7 @@
 /*   By: rabril-h <rabril-h@student.42barc...>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/06 15:19:19 by rabril-h          #+#    #+#             */
-/*   Updated: 2022/04/06 19:23:45 by rabril-h         ###   ########.bcn      */
+/*   Updated: 2022/04/06 21:11:06 by rabril-h         ###   ########.bcn      */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,8 @@ void	decoder(int sig, siginfo_t *info, void *context)
 
 	(void)context;
 	if (sig == SIGUSR2)
-	{
 		ch = ch | 128 >> counter;
-		kill(info->si_pid, SIGUSR2);
-	}	
+	kill(info->si_pid, SIGUSR2);
 	counter++;
 	if (counter == 8)
 	{
@@ -55,6 +53,6 @@ int	main(void)
 	sa2.sa_sigaction = decoder;
 	sigaction(SIGUSR2, &sa2, NULL);
 	while (1)
-		sleep(5);
+		sleep(100);
 	return (0);
 }
